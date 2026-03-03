@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1F1F1F">
+
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_marginTop="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/higherlowerhome"
+        android:contentDescription="App logo"
+        android:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="24dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_scoreboard"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:text="Score Board"
+            app:backgroundTint="@android:color/transparent"
+            app:strokeColor="#FFD700"
+            app:strokeWidth="3dp"
+            android:layout_margin="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_start_game"
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:text="Start Playing"
+            android:textSize="18sp"
+            app:backgroundTint="@android:color/transparent"
+            app:strokeColor="#FFD700"
+            app:strokeWidth="3dp"
+            android:layout_margin="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_options"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:text="Options"
+            app:backgroundTint="@android:color/transparent"
+            app:strokeColor="#FFD700"
+            app:strokeWidth="3dp"
+            android:layout_margin="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

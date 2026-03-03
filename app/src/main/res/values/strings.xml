@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">final_project_team10</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="label_home_fragment">Higher/Lower Game</string>
+    <string name="label_game_fragment">Higher/Lower Home</string>
 </resources>
