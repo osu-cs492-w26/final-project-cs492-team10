@@ -1,44 +1,170 @@
 package com.example.final_project_team10.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.example.final_project_team10.R
 import com.example.final_project_team10.data.Movie_Info
-import com.example.final_project_team10.data.TMDBService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.google.android.material.progressindicator.CircularProgressIndicator
 
+//everything in here should be an almost direct copy from the assignment 4 startercode
 class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
     private val API_KEY = "142812ec11e8136f3be45a8439922fa8"
+    private val viewModel: GameScreenViewModel by viewModels()
+    private lateinit var loadingIndicator: CircularProgressIndicator
+    private lateinit var loadingErrorTV: TextView
+
+    private lateinit var movieABox: LinearLayout
+    private lateinit var movieBBox: LinearLayout
+
+    //for movie A
+    private lateinit var titleTextA: TextView
+    private lateinit var dateTextA: TextView
+    private lateinit var overviewTextA: TextView
+
+    //for movie B
+    private lateinit var titleTextB: TextView
+    private lateinit var dateTextB: TextView
+    private lateinit var overviewTextB: TextView
+
+    //result values
+    private lateinit var ratingResultsA: TextView
+    private lateinit var ratingResultsB: TextView
+    private lateinit var gameResult: TextView
+
+    private lateinit var nextGame: TextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //basic printing function, will change later
-        val titleText: TextView = view.findViewById(R.id.titleText)
-        val dateText: TextView = view.findViewById(R.id.dateText)
-        val overviewText: TextView = view.findViewById(R.id.overviewText)
-        val ratingText: TextView = view.findViewById(R.id.ratingText)
 
-        val tmdbService = TMDBService.create()
+        movieABox = view.findViewById(R.id.movieABox)
+        movieBBox = view.findViewById(R.id.movieBBox)
 
-//        tmdbService.getMovie(550, API_KEY).enqueue(object : Callback<Movie_Info> {
-//            override fun onResponse(call: Call<Movie_Info>, response: Response<Movie_Info>) {
-//                if (response.isSuccessful) {
-//                    val movie = response.body()
-//                    titleText.text = movie?.title
-//                    dateText.text = "Release Date: ${movie?.release_date}"
-//                    ratingText.text = "Rating: ${movie?.vote_average}"
-//                    overviewText.text = movie?.overview
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<Movie_Info>, t: Throwable) {
-//                titleText.text = "Failed: ${t.message}"
-//            }
-//        })
+        loadingErrorTV = view.findViewById(R.id.tv_loading_error)
+        loadingIndicator = view.findViewById(R.id.loading_indicator)
+
+        titleTextA = view.findViewById(R.id.titleTextA)
+        dateTextA = view.findViewById(R.id.dateTextA)
+        overviewTextA = view.findViewById(R.id.overviewTextA)
+
+        titleTextB = view.findViewById(R.id.titleTextB)
+        dateTextB = view.findViewById(R.id.dateTextB)
+        overviewTextB = view.findViewById(R.id.overviewTextB)
+
+        ratingResultsA = view.findViewById(R.id.tv_resultA)
+        ratingResultsB = view.findViewById(R.id.tv_resultB)
+
+        gameResult = view.findViewById(R.id.game_result)
+        nextGame = view.findViewById(R.id.next_game)
+
+        viewModel.movieA.observe(viewLifecycleOwner) { movie ->
+            if (movie != null) {
+                bindMovieA(movie)
+                movieABox.visibility = View.VISIBLE
+            }
+        }
+
+        viewModel.movieB.observe(viewLifecycleOwner) { movie ->
+            if (movie != null) {
+                bindMovieB(movie)
+                movieBBox.visibility = View.VISIBLE
+            }
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            if (error != null) {
+                loadingErrorTV.text = getString(R.string.loading_error, error.message)
+                loadingErrorTV.visibility = View.VISIBLE
+                Log.e("GameScreenFragment", "Error fetching movie: ${error.message}")
+                error.printStackTrace()
+            }
+        }
+
+        viewModel.loading.observe(viewLifecycleOwner) { loading ->
+            if (loading) {
+                loadingIndicator.visibility = View.VISIBLE
+                loadingErrorTV.visibility = View.INVISIBLE
+                movieABox.visibility = View.INVISIBLE
+                movieBBox.visibility = View.INVISIBLE
+            } else {
+                loadingIndicator.visibility = View.INVISIBLE
+            }
+        }
+
+        //clickable buttons
+        movieABox.setOnClickListener {
+            viewModel.movieA.value?.let { movie -> onMovieSelected(movie, "A") }
+        }
+        movieBBox.setOnClickListener {
+            viewModel.movieB.value?.let { movie -> onMovieSelected(movie, "B") }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //use this for normal movie loading
+        //viewModel.loadMovieInfo(550, 680, API_KEY)
+
+        //use this for random movie loading
+        viewModel.loadRandomMovieInfo (API_KEY)
+    }
+
+    private fun bindMovieA(movie: Movie_Info) {
+        titleTextA.text = movie.title
+        dateTextA.text = "Release Date: ${movie.release_date}"
+        overviewTextA.text = movie.overview
+    }
+
+    private fun bindMovieB(movie: Movie_Info) {
+        titleTextB.text = movie.title
+        dateTextB.text = "Release Date: ${movie.release_date}"
+        overviewTextB.text = movie.overview
+    }
+
+    //on button click
+    private fun onMovieSelected(movie: Movie_Info, selected_movie: String) {
+
+        //this gets the two movie name
+        val movieA_name = viewModel.movieA.value
+        val movieB_name = viewModel.movieB.value
+
+        //displays the rating of both
+        ratingResultsA.text = "Rating: ${movieA_name?.vote_average}"
+        ratingResultsA.visibility = View.VISIBLE
+
+        ratingResultsB.text = "Rating:  ${movieB_name?.vote_average}"
+        ratingResultsB.visibility = View.VISIBLE
+
+        //compares the movie ratings and writes if the guess is wrong or not
+        if (movieA_name != null && movieB_name != null) {
+            val higher = if ( movieA_name.vote_average >=  movieB_name.vote_average) "A" else "B"
+            if (selected_movie == higher) {
+                gameResult.text = "Correct"
+            }
+            else {
+                gameResult.text = "Incorrect"
+            }
+            gameResult.visibility = View.VISIBLE
+            nextGame.visibility = View.VISIBLE
+            movieABox.isClickable = false
+            movieBBox.isClickable = false
+
+            //button to play next game
+            nextGame.setOnClickListener {
+                ratingResultsA.visibility = View.INVISIBLE
+                ratingResultsB.visibility = View.INVISIBLE
+                gameResult.visibility = View.INVISIBLE
+                movieABox.isClickable = true
+                movieBBox.isClickable = true
+                viewModel.loadRandomMovieInfo(API_KEY)
+                nextGame.visibility = View.INVISIBLE
+            }
+        }
     }
 }

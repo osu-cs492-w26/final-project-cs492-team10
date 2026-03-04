@@ -4,4 +4,7 @@
 
     <string name="label_home_fragment">Higher/Lower Game</string>
     <string name="label_game_fragment">Higher/Lower Home</string>
+
+    <string name="loading_error">Unable to fetch Movie data.  Error message: %1$s</string>
+
 </resources>
