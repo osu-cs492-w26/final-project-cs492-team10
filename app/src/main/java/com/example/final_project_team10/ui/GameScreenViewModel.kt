@@ -23,6 +23,10 @@ class GameScreenViewModel : ViewModel(){
     private val _movieBResults = MutableLiveData<Movie_Info?>(null)
     val movieB: LiveData<Movie_Info?> = _movieBResults
 
+    //keeps score
+    private val _score = MutableLiveData<Int>(0)
+    val score: LiveData<Int> = _score
+
     private val _error = MutableLiveData<Throwable?>(null)
     val error: LiveData<Throwable?> = _error
 
@@ -72,5 +76,13 @@ class GameScreenViewModel : ViewModel(){
             _movieAResults.value = resultA.getOrNull()
             _movieBResults.value = resultB.getOrNull()
         }
+    }
+
+    fun addToScore() {
+        _score.value = (_score.value ?: 0) + 1
+    }
+
+    fun resetScore() {
+        _score.value = 0
     }
 }

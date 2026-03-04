@@ -145,10 +145,14 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         if (movieA_name != null && movieB_name != null) {
             val higher = if ( movieA_name.vote_average >=  movieB_name.vote_average) "A" else "B"
             if (selected_movie == higher) {
-                gameResult.text = "Correct"
+                viewModel.addToScore()
+                gameResult.text = "Correct | Current Score: ${viewModel.score.value}"
+                nextGame.text = "Next Round"
             }
             else {
-                gameResult.text = "Incorrect"
+                gameResult.text = "Incorrect | Final Score: ${viewModel.score.value}"
+                viewModel.resetScore()
+                nextGame.text = "New Game"
             }
             gameResult.visibility = View.VISIBLE
             nextGame.visibility = View.VISIBLE

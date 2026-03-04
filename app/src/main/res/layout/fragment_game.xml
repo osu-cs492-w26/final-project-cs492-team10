@@ -134,7 +134,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="50sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:visibility="invisible" />
 
@@ -146,7 +146,6 @@
             android:text="Next Game"
             android:textSize="25sp"
             android:visibility="invisible" />
-
 
     </LinearLayout>
 
