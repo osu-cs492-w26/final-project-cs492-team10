@@ -78,6 +78,35 @@ class GameScreenViewModel : ViewModel(){
         }
     }
 
+    //on rounds after the first, keep the higher-rated movie as A and load a new random B
+    fun loadNextRound(apiKey: String) {
+        if ((_score.value ?: 0) == 0) {
+            loadRandomMovieInfo(apiKey)
+            return
+        }
+
+        val currentA = _movieAResults.value
+        val currentB = _movieBResults.value
+
+        //if either currentA or currentB is null, we should load new random movies
+        val winner = if ((currentA?.vote_average ?: 0.0) >= (currentB?.vote_average ?: 0.0)) currentA else currentB
+
+        viewModelScope.launch {
+            _loading.value = true
+            val randomNumberB = Random.nextInt(1, 1000)
+            val resultB = repository.loadMovieInfo(randomNumberB, apiKey)
+            _loading.value = false
+
+            if (resultB.isFailure || resultB.getOrNull() == null) {
+                loadNextRound(apiKey)
+                return@launch
+            }
+
+            _movieAResults.value = winner
+            _movieBResults.value = resultB.getOrNull()
+        }
+    }
+
     fun addToScore() {
         _score.value = (_score.value ?: 0) + 1
     }

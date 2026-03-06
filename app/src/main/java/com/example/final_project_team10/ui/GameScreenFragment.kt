@@ -166,7 +166,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
                 gameResult.visibility = View.INVISIBLE
                 movieABox.isClickable = true
                 movieBBox.isClickable = true
-                viewModel.loadRandomMovieInfo(API_KEY)
+                viewModel.loadNextRound(API_KEY)
                 nextGame.visibility = View.INVISIBLE
             }
         }
