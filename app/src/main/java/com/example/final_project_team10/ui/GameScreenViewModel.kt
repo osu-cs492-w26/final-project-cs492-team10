@@ -88,7 +88,7 @@ class GameScreenViewModel : ViewModel(){
         val currentA = _movieAResults.value
         val currentB = _movieBResults.value
 
-        //if either currentA or currentB is null, we should load new random movies
+        //check the winner
         val winner = if ((currentA?.vote_average ?: 0.0) >= (currentB?.vote_average ?: 0.0)) currentA else currentB
 
         viewModelScope.launch {
