@@ -23,6 +23,12 @@ class HomeScreenFragment : Fragment(R.layout.fragment_home) {
             findNavController().navigate(directions)
         }
 
+        optionsButton.setOnClickListener {
+            Log.d("Open settings", "Navigating to Settings Page")
+            val directions = HomeScreenFragmentDirections.navigateToSettingsPage()
+            findNavController().navigate(directions)
+        }
+
     }
 
 }

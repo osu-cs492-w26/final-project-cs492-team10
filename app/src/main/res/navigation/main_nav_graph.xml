@@ -19,4 +19,12 @@
             app:destination="@id/game_page" />
     </fragment>
 
+    <fragment
+        android:id="@+id/setting_page"
+        android:name="com.example.final_project_team10.ui.SettingsFragment"/>
+        <action
+            android:id="@+id/navigate_to_settings_page"
+            app:destination="@id/setting_page" />
+
+
 </navigation>

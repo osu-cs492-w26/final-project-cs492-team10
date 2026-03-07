@@ -15,9 +15,13 @@ class Movie_Info_Repository (
     private var currentMovieId: Int? = null
     private var cachedMovie: Movie_Info? = null
 
+    private var currentGenreId: Int? = null
+    private var cachedGenreMovies: List<Movie_Info>? = null
+
     private val cacheMaxAge = 5.minutes
     private val timeSource = TimeSource.Monotonic
     private var timeStamp = timeSource.markNow()
+    private var genreTimeStamp = timeSource.markNow()
 
     suspend fun loadMovieInfo(
         movieId: Int,
@@ -45,8 +49,41 @@ class Movie_Info_Repository (
             Result.success(cachedMovie!!)
         }
     }
+
+    suspend fun loadMoviesByGenre(
+        genreId: Int?,
+        apiKey: String,
+        page: Int = 1
+    ): Result<List<Movie_Info>> {
+
+        return if (shouldFetchGenre(genreId)) {
+            withContext(ioDispatcher) {
+                try {
+                    val response = service.getMovieByGenre(apiKey, genreId, page)
+                    if (response.isSuccessful) {
+                        cachedGenreMovies = response.body()?.results ?: emptyList()
+                        genreTimeStamp = timeSource.markNow()
+                        currentGenreId = genreId
+                        Result.success(cachedGenreMovies!!)
+                    } else {
+                        Result.failure(Exception(response.errorBody()?.string()))
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Result.failure(e)
+                }
+            }
+        } else {
+            Result.success(cachedGenreMovies!!)
+        }
+    }
     private fun shouldFetch(movieId: Int): Boolean =
         cachedMovie == null
         || movieId != currentMovieId
         || (timeStamp + cacheMaxAge).hasPassedNow()
+
+    private fun shouldFetchGenre(genreId: Int?): Boolean =
+        cachedGenreMovies == null
+        || genreId != currentGenreId
+        || (genreTimeStamp + cacheMaxAge).hasPassedNow()
 }

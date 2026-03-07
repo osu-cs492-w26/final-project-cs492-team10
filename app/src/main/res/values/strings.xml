@@ -7,4 +7,30 @@
 
     <string name="loading_error">Unable to fetch Movie data.  Error message: %1$s</string>
 
+    <string name="pref_genre_entry_all">All</string>
+    <string name="pref_genre_entry_action">Action</string>
+    <string name="pref_genre_entry_romance">Romance</string>
+    <string name="pref_genre_entry_comedy">Comedy</string>
+    <string name="pref_genre_entry_horror">Horror</string>
+    <string name="pref_genre_entry_drama">Drama</string>
+
+    <string name="pref_genre_key">genre</string>
+    <string name="pref_genre_default_value">@string/pref_genre_value_all</string>
+
+    <string name="pref_genre_value_all">0</string>
+    <string name="pref_genre_value_action">28</string>
+    <string name="pref_genre_value_romance">10749</string>
+    <string name="pref_genre_value_comedy">35</string>
+    <string name="pref_genre_value_horror">27</string>
+    <string name="pref_genre_value_drama">18</string>
+
+    <string name="pref_mode_entry_classic">Classic Mode</string>
+    <string name="pref_mode_entry_random">Random Mode</string>
+
+    <string name="pref_mode_key">game_mode</string>
+    <string name="pref_mode_default_value">@string/pref_mode_value_classic</string>
+
+    <string name="pref_mode_value_classic" translatable="false">classic</string>
+    <string name="pref_mode_value_random" translatable="false">random</string>
+
 </resources>

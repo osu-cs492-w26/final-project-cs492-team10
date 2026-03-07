@@ -1,5 +1,6 @@
 package com.example.final_project_team10.ui
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -7,7 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import com.example.final_project_team10.R
 import com.example.final_project_team10.data.Movie_Info
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -17,6 +18,8 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
     private val API_KEY = "142812ec11e8136f3be45a8439922fa8"
     private val viewModel: GameScreenViewModel by viewModels()
+
+    private lateinit var prefs: SharedPreferences
     private lateinit var loadingIndicator: CircularProgressIndicator
     private lateinit var loadingErrorTV: TextView
 
@@ -42,6 +45,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         movieABox = view.findViewById(R.id.movieABox)
         movieBBox = view.findViewById(R.id.movieBBox)
@@ -111,8 +115,17 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         //use this for normal movie loading
         //viewModel.loadMovieInfo(550, 680, API_KEY)
 
-        //use this for random movie loading
-        viewModel.loadRandomMovieInfo (API_KEY)
+        // https://www.themoviedb.org/talk/630a76b6ca7ec6009247749c
+        //this link helped with figuring out how to make the random moive by genre
+
+        //gets the genre value to check with mode the game should be played
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+        val genrenum = prefs.getString("genre", "0")
+        val genreid = genrenum?.toIntOrNull()?.takeIf { it != 0 }
+
+        viewModel.setGenreId(genreid)
+        viewModel.loadRandomMovieInfo(API_KEY)
     }
 
     private fun bindMovieA(movie: Movie_Info) {
@@ -129,6 +142,12 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
     //on button click
     private fun onMovieSelected(movie: Movie_Info, selected_movie: String) {
+
+        //gets the game mode from preference/setting from user
+        val gamemode = prefs.getString(
+            getString(R.string.pref_mode_key),
+            getString(R.string.pref_mode_default_value)
+        )
 
         //this gets the two movie name
         val movieA_name = viewModel.movieA.value
@@ -166,7 +185,14 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
                 gameResult.visibility = View.INVISIBLE
                 movieABox.isClickable = true
                 movieBBox.isClickable = true
-                viewModel.loadNextRound(API_KEY)
+
+                //checks the game mode setting to decide the game mode
+                if (gamemode == "classic") {
+                    viewModel.loadNextRound(API_KEY)
+                } else {
+                    viewModel.loadRandomMovieInfo(API_KEY)
+                }
+
                 nextGame.visibility = View.INVISIBLE
             }
         }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        app:key="game_mode"
+        app:title="Game Mode"
+        android:entries="@array/pref_mode_entries"
+        android:entryValues="@array/pref_mode_values"
+        android:defaultValue="classic"
+        app:useSimpleSummaryProvider="true"/>
+
+    <ListPreference
+        app:key="@string/pref_genre_key"
+        app:title="Genre"
+        android:entries="@array/pref_genre_entries"
+        android:entryValues="@array/pref_genre_values"
+        android:defaultValue="0"
+        app:useSimpleSummaryProvider="true"/>
+
+</androidx.preference.PreferenceScreen>
