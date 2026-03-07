@@ -16,6 +16,14 @@ interface TMDBService {
         @Query("api_key") apiKey: String
     ): Response<Movie_Info>
 
+    @GET("discover/movie")
+    suspend fun getMovieByGenre(
+        @Query("api_key") apiKey: String,
+        @Query("with_genres") genreId: Int?,
+        @Query("page") page: Int = 1,
+        @Query("sort_by") sortBy: String = "popularity.desc"
+    ): Response<Movie_Info_Genre>
+
     companion object {
         private const val BASE_URL = "https://api.themoviedb.org/3/"
         fun create(): TMDBService {

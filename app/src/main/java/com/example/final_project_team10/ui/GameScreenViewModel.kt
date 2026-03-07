@@ -1,5 +1,6 @@
 package com.example.final_project_team10.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,6 +34,8 @@ class GameScreenViewModel : ViewModel(){
     private val _loading = MutableLiveData<Boolean>(false)
     val loading: LiveData<Boolean> = _loading
 
+    private var currentGenreId: Int? = null
+
     //this is for loading in movie id normally
     /*fun loadMovieInfo (movieIdA: Int, movieIdB: Int, apiKey: String) {
         viewModelScope.launch {
@@ -48,33 +51,55 @@ class GameScreenViewModel : ViewModel(){
 
     //this is for loading in random movie ids
     fun loadRandomMovieInfo (apiKey: String) {
-        //we can also increase the random gen number values
-        val randomNumberA = Random.nextInt(1, 1000)
-        var randomNumberB = Random.nextInt(1, 1000)
-
-        //checks for random duplicates
-        while (randomNumberB == randomNumberA){
-            randomNumberB = Random.nextInt(1, 1000)
-        }
-
         viewModelScope.launch {
             _loading.value = true
-            val resultA = repository.loadMovieInfo(randomNumberA, apiKey)
-            val resultB = repository.loadMovieInfo(randomNumberB, apiKey)
-            _loading.value = false
+            //search by genre
+            if (currentGenreId != null) {
+                val randomPageNumber = Random.nextInt(1, 100)
+                val genre_movies = repository.loadMoviesByGenre(currentGenreId, apiKey, randomPageNumber)
+                _loading.value = false
 
-            //found this function online
-            //this is so that the function return only successful movieID
-            //without this there were issues where some random values would return errors
-            if (resultA.isFailure || resultA.getOrNull() == null ||
-                resultB.isFailure || resultB.getOrNull() == null) {
-                loadRandomMovieInfo(apiKey)
-                return@launch
+                if (genre_movies.isFailure || genre_movies.getOrNull() == null) {
+                    loadRandomMovieInfo(apiKey)
+                    return@launch
+                }
+
+                //found online
+                //this shuffles the movie genre list instead of randomly calling
+                val shuffled = genre_movies.getOrNull()!!.shuffled()
+                _movieAResults.value = shuffled[0]
+                _movieBResults.value = shuffled[1]
             }
 
-            _error.value = resultA.exceptionOrNull() ?: resultB.exceptionOrNull()
-            _movieAResults.value = resultA.getOrNull()
-            _movieBResults.value = resultB.getOrNull()
+            //search by random id
+            else {
+                //we can also increase the random gen number values
+                val randomNumberA = Random.nextInt(1, 1000)
+                var randomNumberB = Random.nextInt(1, 1000)
+
+                //checks for random duplicates
+                while (randomNumberB == randomNumberA){
+                    randomNumberB = Random.nextInt(1, 1000)
+                }
+
+                val resultA = repository.loadMovieInfo(randomNumberA, apiKey)
+                val resultB = repository.loadMovieInfo(randomNumberB, apiKey)
+                _loading.value = false
+
+                //found this function online
+                //this is so that the function return only successful movieID
+                //without this there were issues where some random values would return errors
+                if (resultA.isFailure || resultA.getOrNull() == null ||
+                    resultB.isFailure || resultB.getOrNull() == null) {
+                    loadRandomMovieInfo(apiKey)
+                    return@launch
+                }
+
+                _error.value = resultA.exceptionOrNull() ?: resultB.exceptionOrNull()
+                _movieAResults.value = resultA.getOrNull()
+                _movieBResults.value = resultB.getOrNull()
+            }
+
         }
     }
 
@@ -93,17 +118,34 @@ class GameScreenViewModel : ViewModel(){
 
         viewModelScope.launch {
             _loading.value = true
-            val randomNumberB = Random.nextInt(1, 1000)
-            val resultB = repository.loadMovieInfo(randomNumberB, apiKey)
-            _loading.value = false
 
-            if (resultB.isFailure || resultB.getOrNull() == null) {
-                loadNextRound(apiKey)
-                return@launch
+            //search by genre
+            if (currentGenreId != null) {
+                val randomPageNumber = Random.nextInt(1, 100)
+                val genre_movies = repository.loadMoviesByGenre(currentGenreId, apiKey, randomPageNumber)
+                _loading.value = false
+
+                if (genre_movies.isFailure || genre_movies.getOrNull() == null) {
+                    loadNextRound(apiKey)
+                    return@launch
+                }
+                _movieAResults.value = winner
+                _movieBResults.value = genre_movies.getOrNull()!!.shuffled().first()
+
+            //search by random id
             }
+            else {
+                val randomNumberB = Random.nextInt(1, 1000)
+                val resultB = repository.loadMovieInfo(randomNumberB, apiKey)
+                _loading.value = false
 
-            _movieAResults.value = winner
-            _movieBResults.value = resultB.getOrNull()
+                if (resultB.isFailure || resultB.getOrNull() == null) {
+                    loadNextRound(apiKey)
+                    return@launch
+                }
+                _movieAResults.value = winner
+                _movieBResults.value = resultB.getOrNull()
+            }
         }
     }
 
@@ -113,5 +155,9 @@ class GameScreenViewModel : ViewModel(){
 
     fun resetScore() {
         _score.value = 0
+    }
+
+    fun setGenreId(genreId: Int?) {
+        currentGenreId = genreId
     }
 }
