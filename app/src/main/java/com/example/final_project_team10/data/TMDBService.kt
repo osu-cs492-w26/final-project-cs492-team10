@@ -9,6 +9,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+
 interface TMDBService {
     @GET("movie/{movie_id}")
     suspend fun getMovie(
@@ -23,6 +24,12 @@ interface TMDBService {
         @Query("page") page: Int = 1,
         @Query("sort_by") sortBy: String = "popularity.desc"
     ): Response<Movie_Info_Genre>
+
+    @GET("movie/{movie_id}/videos")
+    suspend fun getMovieVideos(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String
+    ): Response<Movie_Video_Response>
 
     companion object {
         private const val BASE_URL = "https://api.themoviedb.org/3/"

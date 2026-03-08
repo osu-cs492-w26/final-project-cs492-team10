@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
 import com.example.final_project_team10.R
@@ -90,9 +91,19 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         }
 
         detailsButtonA.setOnClickListener {
+            val movie = viewModel.movieA.value ?: return@setOnClickListener
+            val bundle = Bundle().apply {
+                putInt("movieId", movie.id)
+            }
+            findNavController().navigate(R.id.movie_details_page, bundle)
         }
 
         detailsButtonB.setOnClickListener {
+            val movie = viewModel.movieB.value ?: return@setOnClickListener
+            val bundle = Bundle().apply {
+                putInt("movieId", movie.id)
+            }
+            findNavController().navigate(R.id.movie_details_page, bundle)
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -139,7 +150,12 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         val genreid = genrenum?.toIntOrNull()?.takeIf { it != 0 }
 
         viewModel.setGenreId(genreid)
-        viewModel.loadRandomMovieInfo(API_KEY)
+
+        // Added condition to make sure that movies don't reload after returning
+        // from a movie detail's page.
+        if (viewModel.movieA.value == null || viewModel.movieB.value == null) {
+            viewModel.loadRandomMovieInfo(API_KEY)
+        }
     }
 
     private fun bindMovieA(movie: Movie_Info) {
