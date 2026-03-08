@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.preference)
 
+    implementation(libs.coil)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

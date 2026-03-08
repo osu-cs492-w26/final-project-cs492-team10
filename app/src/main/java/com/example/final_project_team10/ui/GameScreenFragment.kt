@@ -12,6 +12,10 @@ import androidx.preference.PreferenceManager
 import com.example.final_project_team10.R
 import com.example.final_project_team10.data.Movie_Info
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import android.widget.ImageButton
+import android.widget.ImageView
+import coil.load
+import com.google.android.material.button.MaterialButton
 
 //everything in here should be an almost direct copy from the assignment 4 startercode
 class GameScreenFragment : Fragment(R.layout.fragment_game) {
@@ -29,19 +33,21 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
     //for movie A
     private lateinit var titleTextA: TextView
     private lateinit var dateTextA: TextView
-    private lateinit var overviewTextA: TextView
+    private lateinit var posterImageA: ImageView
+    private lateinit var detailsButtonA: ImageButton
 
     //for movie B
     private lateinit var titleTextB: TextView
     private lateinit var dateTextB: TextView
-    private lateinit var overviewTextB: TextView
+    private lateinit var posterImageB: ImageView
+    private lateinit var detailsButtonB: ImageButton
 
     //result values
     private lateinit var ratingResultsA: TextView
     private lateinit var ratingResultsB: TextView
     private lateinit var gameResult: TextView
 
-    private lateinit var nextGame: TextView
+    private lateinit var nextGame: MaterialButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,11 +61,13 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
         titleTextA = view.findViewById(R.id.titleTextA)
         dateTextA = view.findViewById(R.id.dateTextA)
-        overviewTextA = view.findViewById(R.id.overviewTextA)
+        posterImageA = view.findViewById(R.id.posterImageA)
+        detailsButtonA = view.findViewById(R.id.detailsButtonA)
 
         titleTextB = view.findViewById(R.id.titleTextB)
         dateTextB = view.findViewById(R.id.dateTextB)
-        overviewTextB = view.findViewById(R.id.overviewTextB)
+        posterImageB = view.findViewById(R.id.posterImageB)
+        detailsButtonB = view.findViewById(R.id.detailsButtonB)
 
         ratingResultsA = view.findViewById(R.id.tv_resultA)
         ratingResultsB = view.findViewById(R.id.tv_resultB)
@@ -79,6 +87,12 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
                 bindMovieB(movie)
                 movieBBox.visibility = View.VISIBLE
             }
+        }
+
+        detailsButtonA.setOnClickListener {
+        }
+
+        detailsButtonB.setOnClickListener {
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -130,14 +144,28 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
     private fun bindMovieA(movie: Movie_Info) {
         titleTextA.text = movie.title
-        dateTextA.text = "Release Date: ${movie.release_date}"
-        overviewTextA.text = movie.overview
+        dateTextA.text = extractYear(movie.release_date)
+
+        posterImageA.load(getPosterUrl(movie.poster_path)) {
+            crossfade(true)
+            placeholder(R.drawable.ic_launcher_background)
+            error(R.drawable.ic_launcher_background)
+        }
     }
 
     private fun bindMovieB(movie: Movie_Info) {
         titleTextB.text = movie.title
-        dateTextB.text = "Release Date: ${movie.release_date}"
-        overviewTextB.text = movie.overview
+        dateTextB.text = extractYear(movie.release_date)
+
+        posterImageB.load(getPosterUrl(movie.poster_path)) {
+            crossfade(true)
+            placeholder(R.drawable.ic_launcher_background)
+            error(R.drawable.ic_launcher_background)
+        }
+
+        //Added this so the ratings for movie B is always initially shown as '???". We can remove if we want.
+        ratingResultsB.text = getString(R.string.hidden_rating)
+        ratingResultsB.visibility = View.VISIBLE
     }
 
     //on button click
@@ -197,4 +225,21 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
             }
         }
     }
+
+    private fun extractYear(releaseDate: String?): String {
+        if (releaseDate.isNullOrBlank() || releaseDate.length < 4) {
+            return "Unknown"
+        }
+        return releaseDate.substring(0, 4)
+    }
+
+    private fun getPosterUrl(posterPath: String?): String? {
+        return if (posterPath.isNullOrBlank()) {
+            null
+        } else {
+            "https://image.tmdb.org/t/p/w500$posterPath"
+        }
+    }
+
+
 }

@@ -33,4 +33,5 @@
     <string name="pref_mode_value_classic" translatable="false">classic</string>
     <string name="pref_mode_value_random" translatable="false">random</string>
 
+    <string name="hidden_rating">\?\?\?</string>
 </resources>
