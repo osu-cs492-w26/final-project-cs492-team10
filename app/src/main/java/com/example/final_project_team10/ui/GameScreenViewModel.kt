@@ -35,6 +35,8 @@ class GameScreenViewModel : ViewModel(){
     val loading: LiveData<Boolean> = _loading
 
     private var currentGenreId: Int? = null
+    private val moviePool = mutableListOf<Movie_Info>()
+    private val usedMovieIds = mutableSetOf<Int>()
 
     //this is for loading in movie id normally
     /*fun loadMovieInfo (movieIdA: Int, movieIdB: Int, apiKey: String) {
@@ -48,6 +50,80 @@ class GameScreenViewModel : ViewModel(){
             _movieBResults.value = resultB.getOrNull()
         }
     }*/
+
+    fun preloadMovies(apiKey: String) {
+        if (moviePool.isNotEmpty()) {
+            startGameFromPool()
+            return
+        }
+
+        viewModelScope.launch {
+            _loading.value = true
+
+            val pagesToLoad = 10
+
+            for (page in 1..pagesToLoad) {
+                val result = repository.loadMoviesByGenre(currentGenreId, apiKey, page)
+
+                if (result.isSuccess) {
+                    val movies = result.getOrNull() ?: emptyList()
+
+                    moviePool.addAll(movies)
+                }
+            }
+
+            moviePool.shuffle()
+
+            _loading.value = false
+
+            // START THE GAME AFTER LOADING
+            startGameFromPool()
+        }
+    }
+
+    fun startGameFromPool() {
+        if (moviePool.size < 2) return
+
+        val first = moviePool.first { it.id !in usedMovieIds }
+        usedMovieIds.add(first.id)
+
+        val second = moviePool.first { it.id !in usedMovieIds }
+        usedMovieIds.add(second.id)
+
+        _movieAResults.value = first
+        _movieBResults.value = second
+    }
+
+    fun loadNextFromPool() {
+        val currentA = _movieAResults.value ?: return
+        val currentB = _movieBResults.value ?: return
+
+        val winner =
+            if (currentA.vote_average >= currentB.vote_average) currentA else currentB
+
+        val targetRating = winner.vote_average
+        val higher = Random.nextBoolean()
+
+        val window = 1.0
+        val minRating = targetRating - window
+        val maxRating = targetRating + window
+
+        var candidates = moviePool.filter {
+            it.id !in usedMovieIds &&
+                    it.vote_average in minRating..maxRating
+        }
+
+        if (candidates.isEmpty()) {
+            candidates = moviePool.filter { it.id !in usedMovieIds }
+        }
+
+        val nextMovie = candidates.random()
+
+        usedMovieIds.add(nextMovie.id)
+
+        _movieAResults.value = winner
+        _movieBResults.value = nextMovie
+    }
 
     //this is for loading in random movie ids
     fun loadRandomMovieInfo (apiKey: String) {

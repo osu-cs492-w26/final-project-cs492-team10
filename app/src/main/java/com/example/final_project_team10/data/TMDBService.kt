@@ -22,7 +22,8 @@ interface TMDBService {
         @Query("api_key") apiKey: String,
         @Query("with_genres") genreId: Int?,
         @Query("page") page: Int = 1,
-        @Query("sort_by") sortBy: String = "popularity.desc"
+        @Query("sort_by") sortBy: String = "popularity.desc",
+        @Query("vote_count.gte") minVotes: Int = 1000
     ): Response<Movie_Info_Genre>
 
     @GET("movie/{movie_id}/videos")

@@ -151,7 +151,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         // Added condition to make sure that movies don't reload after returning
         // from a movie detail's page.
         if (viewModel.movieA.value == null || viewModel.movieB.value == null) {
-            viewModel.loadRandomMovieInfo(API_KEY)
+            viewModel.preloadMovies(API_KEY)
         }
     }
 
@@ -232,7 +232,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
                 //checks the game mode setting to decide the game mode
                 if (gamemode == "classic") {
-                    viewModel.loadNextRound(API_KEY)
+                    viewModel.loadNextFromPool()
                 } else {
                     viewModel.loadRandomMovieInfo(API_KEY)
                 }
