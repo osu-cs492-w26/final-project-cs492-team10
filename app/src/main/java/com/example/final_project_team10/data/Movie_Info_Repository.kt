@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
+import com.example.final_project_team10.data.Movie_Video
 
 //the caching system is the same as the one used in our assignments
 class Movie_Info_Repository (
@@ -77,6 +78,27 @@ class Movie_Info_Repository (
             Result.success(cachedGenreMovies!!)
         }
     }
+
+    suspend fun loadMovieVideos(
+        movieId: Int,
+        apiKey: String
+    ): Result<List<Movie_Video>> {
+        return withContext(ioDispatcher) {
+            try {
+                val response = service.getMovieVideos(movieId, apiKey)
+                if (response.isSuccessful) {
+                    Result.success(response.body()?.results ?: emptyList())
+                } else {
+                    Result.failure(Exception(response.errorBody()?.string()))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.failure(e)
+            }
+        }
+    }
+
+
     private fun shouldFetch(movieId: Int): Boolean =
         cachedMovie == null
         || movieId != currentMovieId

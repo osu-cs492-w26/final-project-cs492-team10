@@ -7,8 +7,7 @@
     <fragment
         android:id="@+id/game_page"
         android:name="com.example.final_project_team10.ui.GameScreenFragment"
-        android:label="@string/label_game_fragment"
-        />
+        android:label="@string/label_game_fragment" />
 
     <fragment
         android:id="@+id/home_page"
@@ -25,6 +24,8 @@
         <action
             android:id="@+id/navigate_to_settings_page"
             app:destination="@id/setting_page" />
+
+
 
 
 </navigation>

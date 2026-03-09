@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1F1F1F"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/loading_indicator_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/tv_loading_error_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:textColor="?attr/colorError"
+            android:textSize="14sp"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/posterImageDetails"
+            android:layout_width="match_parent"
+            android:layout_height="420dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/black"
+            android:contentDescription="Movie Poster"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/titleTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="#A9D6FF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dateTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#BDBDBD"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/ratingTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#D4AF37"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/genreLabelTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Genres"
+            android:textColor="#A9D6FF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/genreTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/runtimeLabelTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Runtime"
+            android:textColor="#A9D6FF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/runtimeTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/budgetLabelTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Budget"
+            android:textColor="#A9D6FF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/budgetTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/revenueLabelTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Box Office"
+            android:textColor="#A9D6FF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/revenueTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/descriptionLabelTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Description"
+            android:textColor="#A9D6FF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/overviewTextDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/trailerLabelTextDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="18dp"
+            android:text="Trailer"
+            android:textColor="#A9D6FF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <WebView
+            android:id="@+id/trailerWebView"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone" />
+
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
