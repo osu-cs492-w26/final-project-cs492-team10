@@ -2,21 +2,23 @@ package com.example.final_project_team10.ui
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
 import com.example.final_project_team10.R
 import com.example.final_project_team10.data.Movie_Info
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
-class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
+class MovieDetailsFragment : BottomSheetDialogFragment() {
 
     private val API_KEY = "142812ec11e8136f3be45a8439922fa8"
     private val viewModel: MovieDetailsViewModel by viewModels()
@@ -36,6 +38,23 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
     private lateinit var trailerWebView: WebView
 
     private var ratingRevealed = false
+
+    companion object {
+        fun newInstance(movieId: Int, ratingRevealed: Boolean): MovieDetailsFragment {
+            return MovieDetailsFragment().apply {
+                arguments = Bundle().apply {
+                    putInt("movieId", movieId)
+                    putBoolean("ratingRevealed", ratingRevealed)
+                }
+            }
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.fragment_movie_details, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -92,20 +111,9 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
             }
         }
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-
         val movieId = requireArguments().getInt("movieId")
-
-        if (viewModel.movieDetails.value == null) {
-            viewModel.loadMovieInfo(movieId, API_KEY)
-        }
-
-        if (viewModel.trailer.value == null) {
-            viewModel.loadMovieTrailer(movieId, API_KEY)
-        }
+        viewModel.loadMovieInfo(movieId, API_KEY)
+        viewModel.loadMovieTrailer(movieId, API_KEY)
     }
 
     private fun bindMovie(movie: Movie_Info) {

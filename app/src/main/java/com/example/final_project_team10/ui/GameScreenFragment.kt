@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
 import com.example.final_project_team10.R
@@ -94,20 +93,14 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
         detailsButtonA.setOnClickListener {
             val movie = viewModel.movieA.value ?: return@setOnClickListener
-            val bundle = Bundle().apply {
-                putInt("movieId", movie.id)
-                putBoolean("ratingRevealed", ratingRevealed)
-            }
-            findNavController().navigate(R.id.movie_details_page, bundle)
+            MovieDetailsFragment.newInstance(movie.id, ratingRevealed)
+                .show(childFragmentManager, "movieDetails")
         }
 
         detailsButtonB.setOnClickListener {
             val movie = viewModel.movieB.value ?: return@setOnClickListener
-            val bundle = Bundle().apply {
-                putInt("movieId", movie.id)
-                putBoolean("ratingRevealed", ratingRevealed)
-            }
-            findNavController().navigate(R.id.movie_details_page, bundle)
+            MovieDetailsFragment.newInstance(movie.id, ratingRevealed)
+                .show(childFragmentManager, "movieDetails")
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
