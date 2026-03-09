@@ -35,8 +35,12 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
     private lateinit var revenueText: TextView
     private lateinit var trailerWebView: WebView
 
+    private var ratingRevealed = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        ratingRevealed = arguments?.getBoolean("ratingRevealed", false) ?: false
 
         loadingErrorTV = view.findViewById(R.id.tv_loading_error_details)
         loadingIndicator = view.findViewById(R.id.loading_indicator_details)
@@ -107,7 +111,12 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
     private fun bindMovie(movie: Movie_Info) {
         titleText.text = movie.title
         dateText.text = "Release Date: ${movie.release_date.ifBlank { "Unknown" }}"
-        ratingText.text = "Rating: %.1f/10".format(movie.vote_average)
+        if (ratingRevealed) {
+            ratingText.text = "Rating: %.1f/10".format(movie.vote_average)
+            ratingText.visibility = View.VISIBLE
+        } else {
+            ratingText.visibility = View.GONE
+        }
         overviewText.text = movie.overview.ifBlank { "No description available." }
 
         val genreNames = if (movie.genres.isNullOrEmpty()) {

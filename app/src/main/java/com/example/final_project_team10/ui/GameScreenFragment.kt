@@ -50,6 +50,8 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
     private lateinit var nextGame: MaterialButton
 
+    private var ratingRevealed = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -94,6 +96,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
             val movie = viewModel.movieA.value ?: return@setOnClickListener
             val bundle = Bundle().apply {
                 putInt("movieId", movie.id)
+                putBoolean("ratingRevealed", ratingRevealed)
             }
             findNavController().navigate(R.id.movie_details_page, bundle)
         }
@@ -102,6 +105,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
             val movie = viewModel.movieB.value ?: return@setOnClickListener
             val bundle = Bundle().apply {
                 putInt("movieId", movie.id)
+                putBoolean("ratingRevealed", ratingRevealed)
             }
             findNavController().navigate(R.id.movie_details_page, bundle)
         }
@@ -197,6 +201,8 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         val movieA_name = viewModel.movieA.value
         val movieB_name = viewModel.movieB.value
 
+        ratingRevealed = true
+
         //displays the rating of both
         ratingResultsA.text = "Rating: ${movieA_name?.vote_average}"
         ratingResultsA.visibility = View.VISIBLE
@@ -224,6 +230,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
             //button to play next game
             nextGame.setOnClickListener {
+                ratingRevealed = false
                 ratingResultsA.visibility = View.INVISIBLE
                 ratingResultsB.visibility = View.INVISIBLE
                 gameResult.visibility = View.INVISIBLE
