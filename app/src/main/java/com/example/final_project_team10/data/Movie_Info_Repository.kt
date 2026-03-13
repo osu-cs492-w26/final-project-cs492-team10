@@ -54,7 +54,7 @@ class Movie_Info_Repository (
     suspend fun loadMoviesByGenre(
         genreId: Int?,
         apiKey: String,
-        page: Int = 1
+        page: Int = 1,
     ): Result<List<Movie_Info>> {
 
         return if (shouldFetchGenre(genreId)) {

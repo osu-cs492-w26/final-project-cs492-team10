@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 
 //this is also almost the same as the assignment 4 starter code
 class GameScreenViewModel : ViewModel(){
+
+    private val API_KEY = "142812ec11e8136f3be45a8439922fa8"
     private val repository = Movie_Info_Repository(TMDBService.create())
 
     //calling the first movie
@@ -36,20 +38,8 @@ class GameScreenViewModel : ViewModel(){
 
     private var currentGenreId: Int? = null
     private val moviePool = mutableListOf<Movie_Info>()
-    private val usedMovieIds = mutableSetOf<Int>()
+    private val seenIds = mutableSetOf<Int>()
 
-    //this is for loading in movie id normally
-    /*fun loadMovieInfo (movieIdA: Int, movieIdB: Int, apiKey: String) {
-        viewModelScope.launch {
-            _loading.value = true
-            val resultA = repository.loadMovieInfo(movieIdA, apiKey)
-            val resultB = repository.loadMovieInfo(movieIdB, apiKey)
-            _loading.value = false
-            _error.value = resultA.exceptionOrNull() ?: resultB.exceptionOrNull()
-            _movieAResults.value = resultA.getOrNull()
-            _movieBResults.value = resultB.getOrNull()
-        }
-    }*/
 
     fun preloadMovies(apiKey: String) {
         if (moviePool.isNotEmpty()) {
@@ -60,15 +50,20 @@ class GameScreenViewModel : ViewModel(){
         viewModelScope.launch {
             _loading.value = true
 
-            val pagesToLoad = 10
+            val pagesToLoad = 5
+            val randomPages = (1..100).shuffled().take(pagesToLoad)
+            Log.d("Random Pages", "Random pages are ${randomPages}")
 
-            for (page in 1..pagesToLoad) {
+
+            for (page in randomPages) {
                 val result = repository.loadMoviesByGenre(currentGenreId, apiKey, page)
-
                 if (result.isSuccess) {
                     val movies = result.getOrNull() ?: emptyList()
-
-                    moviePool.addAll(movies)
+                    movies.forEach { movie ->
+                        if (seenIds.add(movie.id)) {
+                            moviePool.add(movie)
+                        }
+                    }
                 }
             }
 
@@ -84,11 +79,8 @@ class GameScreenViewModel : ViewModel(){
     fun startGameFromPool() {
         if (moviePool.size < 2) return
 
-        val first = moviePool.first { it.id !in usedMovieIds }
-        usedMovieIds.add(first.id)
-
-        val second = moviePool.first { it.id !in usedMovieIds }
-        usedMovieIds.add(second.id)
+        val first = moviePool.removeAt(0)
+        val second = moviePool.removeAt(0)
 
         _movieAResults.value = first
         _movieBResults.value = second
@@ -102,128 +94,59 @@ class GameScreenViewModel : ViewModel(){
             if (currentA.vote_average >= currentB.vote_average) currentA else currentB
 
         val targetRating = winner.vote_average
-        val higher = Random.nextBoolean()
 
         val window = 1.0
         val minRating = targetRating - window
         val maxRating = targetRating + window
 
         var candidates = moviePool.filter {
-            it.id !in usedMovieIds &&
-                    it.vote_average in minRating..maxRating
+            it.vote_average in minRating..maxRating
         }
 
         if (candidates.isEmpty()) {
-            candidates = moviePool.filter { it.id !in usedMovieIds }
+            candidates = moviePool
+        }
+
+        if (candidates.isEmpty()) {
+            Log.e("GameScreen", "No movies left in pool")
+            return
         }
 
         val nextMovie = candidates.random()
 
-        usedMovieIds.add(nextMovie.id)
+        moviePool.remove(nextMovie)
 
         _movieAResults.value = winner
         _movieBResults.value = nextMovie
     }
 
+
     //this is for loading in random movie ids
-    fun loadRandomMovieInfo (apiKey: String) {
-        viewModelScope.launch {
-            _loading.value = true
-            //search by genre
-            if (currentGenreId != null) {
-                val randomPageNumber = Random.nextInt(1, 100)
-                val genre_movies = repository.loadMoviesByGenre(currentGenreId, apiKey, randomPageNumber)
-                _loading.value = false
-
-                if (genre_movies.isFailure || genre_movies.getOrNull() == null) {
-                    loadRandomMovieInfo(apiKey)
-                    return@launch
-                }
-
-                //found online
-                //this shuffles the movie genre list instead of randomly calling
-                val shuffled = genre_movies.getOrNull()!!.shuffled()
-                _movieAResults.value = shuffled[0]
-                _movieBResults.value = shuffled[1]
-            }
-
-            //search by random id
-            else {
-                //we can also increase the random gen number values
-                val randomNumberA = Random.nextInt(1, 1000)
-                var randomNumberB = Random.nextInt(1, 1000)
-
-                //checks for random duplicates
-                while (randomNumberB == randomNumberA){
-                    randomNumberB = Random.nextInt(1, 1000)
-                }
-
-                val resultA = repository.loadMovieInfo(randomNumberA, apiKey)
-                val resultB = repository.loadMovieInfo(randomNumberB, apiKey)
-                _loading.value = false
-
-                //found this function online
-                //this is so that the function return only successful movieID
-                //without this there were issues where some random values would return errors
-                if (resultA.isFailure || resultA.getOrNull() == null ||
-                    resultB.isFailure || resultB.getOrNull() == null) {
-                    loadRandomMovieInfo(apiKey)
-                    return@launch
-                }
-
-                _error.value = resultA.exceptionOrNull() ?: resultB.exceptionOrNull()
-                _movieAResults.value = resultA.getOrNull()
-                _movieBResults.value = resultB.getOrNull()
-            }
-
-        }
-    }
-
-    //on rounds after the first, keep the higher-rated movie as A and load a new random B
-    fun loadNextRound(apiKey: String) {
-        if ((_score.value ?: 0) == 0) {
-            loadRandomMovieInfo(apiKey)
-            return
-        }
-
-        val currentA = _movieAResults.value
-        val currentB = _movieBResults.value
-
-        //check the winner
-        val winner = if ((currentA?.vote_average ?: 0.0) >= (currentB?.vote_average ?: 0.0)) currentA else currentB
-
+    fun loadRandomMovieInfo(apiKey: String) {
         viewModelScope.launch {
             _loading.value = true
 
-            //search by genre
-            if (currentGenreId != null) {
-                val randomPageNumber = Random.nextInt(1, 100)
-                val genre_movies = repository.loadMoviesByGenre(currentGenreId, apiKey, randomPageNumber)
+            if (moviePool.size < 2) {
+                Log.e("GameScreen", "Movie pool does not contain enough movies")
                 _loading.value = false
-
-                if (genre_movies.isFailure || genre_movies.getOrNull() == null) {
-                    loadNextRound(apiKey)
-                    return@launch
-                }
-                _movieAResults.value = winner
-                _movieBResults.value = genre_movies.getOrNull()!!.shuffled().first()
-
-            //search by random id
+                return@launch
             }
-            else {
-                val randomNumberB = Random.nextInt(1, 1000)
-                val resultB = repository.loadMovieInfo(randomNumberB, apiKey)
-                _loading.value = false
 
-                if (resultB.isFailure || resultB.getOrNull() == null) {
-                    loadNextRound(apiKey)
-                    return@launch
-                }
-                _movieAResults.value = winner
-                _movieBResults.value = resultB.getOrNull()
-            }
+            moviePool.shuffle()
+
+            Log.d("Movie Pool", moviePool.map { it.title }.toString())
+            Log.d("Movie Pool Count", "${moviePool.size}")
+            val movieA = moviePool.removeAt(0)
+            val movieB = moviePool.removeAt(0)
+
+            _movieAResults.value = movieA
+            _movieBResults.value = movieB
+
+            _loading.value = false
         }
     }
+
+
 
     fun addToScore() {
         _score.value = (_score.value ?: 0) + 1
@@ -231,6 +154,16 @@ class GameScreenViewModel : ViewModel(){
 
     fun resetScore() {
         _score.value = 0
+    }
+
+//    Function to reset moviePool and usedMovieIds on game restart
+    fun resetGame() {
+        Log.d("GamePool", "Pool size before reset: ${moviePool.size}")
+        moviePool.clear()
+        seenIds.clear()
+        Log.d("GamePool", "Pool size before preload: ${moviePool.size}")
+        preloadMovies(API_KEY)
+        Log.d("GamePool", "Pool size after preload: ${moviePool.size}")
     }
 
     fun setGenreId(genreId: Int?) {
