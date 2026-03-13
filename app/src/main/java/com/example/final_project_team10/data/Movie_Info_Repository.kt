@@ -55,9 +55,9 @@ class Movie_Info_Repository (
         genreId: Int?,
         apiKey: String,
         page: Int = 1,
+        forceRefresh: Boolean = false
     ): Result<List<Movie_Info>> {
-
-        return if (shouldFetchGenre(genreId)) {
+        return if (forceRefresh || shouldFetchGenre(genreId)) {
             withContext(ioDispatcher) {
                 try {
                     val response = service.getMovieByGenre(apiKey, genreId, page)

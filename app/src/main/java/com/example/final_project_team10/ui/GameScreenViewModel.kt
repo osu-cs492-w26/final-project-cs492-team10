@@ -50,13 +50,13 @@ class GameScreenViewModel : ViewModel(){
         viewModelScope.launch {
             _loading.value = true
 
-            val pagesToLoad = 5
+            val pagesToLoad = 1
             val randomPages = (1..100).shuffled().take(pagesToLoad)
             Log.d("Random Pages", "Random pages are ${randomPages}")
 
 
             for (page in randomPages) {
-                val result = repository.loadMoviesByGenre(currentGenreId, apiKey, page)
+                val result = repository.loadMoviesByGenre(currentGenreId, apiKey, page, true)
                 if (result.isSuccess) {
                     val movies = result.getOrNull() ?: emptyList()
                     movies.forEach { movie ->
