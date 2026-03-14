@@ -29,6 +29,10 @@ class HomeScreenFragment : Fragment(R.layout.fragment_home) {
             findNavController().navigate(directions)
         }
 
+        scoreboardButton.setOnClickListener {
+            Log.d("Open scoreboard", "Navigating to Scoreboard Page")
+            val directions = HomeScreenFragmentDirections.navigateToScoreboardPage()
+            findNavController().navigate(directions)
+        }
     }
-
 }
