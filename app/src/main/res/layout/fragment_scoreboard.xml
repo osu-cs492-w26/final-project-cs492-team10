@@ -16,12 +16,25 @@
         android:gravity="center"
         android:paddingBottom="16dp"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_clear_scores"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Clear Scores"/>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:spacing="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_clear_scores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear Scores"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_share_scores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Share Scores"/>
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
