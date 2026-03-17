@@ -1,64 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1F1F1F">
 
+
     <ImageView
-        android:id="@+id/logoImage"
-        android:layout_marginTop="80dp"
+        android:id="@+id/moviePosterOne"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:src="@drawable/higherlowerhome"
-        android:contentDescription="App logo"
-        android:layout_marginBottom="16dp"/>
+        android:layout_height="match_parent"
+        android:alpha="0.7"
+        android:scaleType="centerCrop"
+        android:contentDescription="Floating movie poster" />
+
+    <ImageView
+        android:id="@+id/moviePosterTwo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.7"
+        android:scaleType="centerCrop"
+        android:contentDescription="Floating movie poster" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#B31F1F1F" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="24dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_scoreboard"
-            android:layout_width="95dp"
-            android:layout_height="80dp"
-            android:text="Scores"
-            android:textSize="12sp"
-            app:backgroundTint="@color/secondary_button_colors"
-            app:strokeColor="#FFD700"
-            app:strokeWidth="3dp"
-            android:layout_margin="8dp" />
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_marginTop="80dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/higherlowerhome"
+            android:contentDescription="App logo"
+            android:layout_marginBottom="16dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_start_game"
-            android:layout_width="170dp"
-            android:layout_height="80dp"
-            android:text="Play"
-            android:textSize="26sp"
-            app:backgroundTint="@color/purple_500"
-            app:strokeColor="#FFD700"
-            app:strokeWidth="3dp"
-            android:layout_margin="8dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="32dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_options"
-            android:layout_width="95dp"
-            android:layout_height="80dp"
-            android:text="Options"
-            android:textSize="12sp"
-            app:backgroundTint="@color/secondary_button_colors"
-            app:strokeColor="#FFD700"
-            app:strokeWidth="3dp"
-            android:layout_margin="8dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_scoreboard"
+                android:layout_width="95dp"
+                android:layout_height="80dp"
+                android:text="Scores"
+                android:textSize="12sp"
+                app:backgroundTint="@color/secondary_button_colors"
+                app:strokeColor="#FFD700"
+                app:strokeWidth="3dp"
+                android:layout_margin="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_start_game"
+                android:layout_width="170dp"
+                android:layout_height="80dp"
+                android:text="Play"
+                android:textSize="26sp"
+                app:backgroundTint="@color/purple_500"
+                app:strokeColor="#FFD700"
+                app:strokeWidth="3dp"
+                android:layout_margin="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_options"
+                android:layout_width="95dp"
+                android:layout_height="80dp"
+                android:text="Options"
+                android:textSize="12sp"
+                app:backgroundTint="@color/secondary_button_colors"
+                app:strokeColor="#FFD700"
+                app:strokeWidth="3dp"
+                android:layout_margin="8dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>
