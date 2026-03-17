@@ -100,7 +100,7 @@ class HomeScreenFragment : Fragment(R.layout.fragment_home) {
         val screenHeight = requireView().height.toFloat()
         val posterHeight = moviePoster.height.toFloat()
 
-        val startY = screenHeight + 150f
+        val startY = screenHeight + 200f
         val endY = -(posterHeight + 200f)
 
         moviePoster.translationY = startY
