@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/moviePosterOne"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="600dp"
         android:alpha="0.7"
         android:scaleType="centerCrop"
         android:contentDescription="Floating movie poster" />
@@ -17,11 +17,18 @@
     <ImageView
         android:id="@+id/moviePosterTwo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="600dp"
         android:alpha="0.7"
         android:scaleType="centerCrop"
         android:contentDescription="Floating movie poster" />
 
+    <ImageView
+        android:id="@+id/moviePosterThree"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:alpha="0.7"
+        android:scaleType="centerCrop"
+        android:contentDescription="Floating movie poster" />
 
     <View
         android:layout_width="match_parent"

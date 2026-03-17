@@ -1,12 +1,10 @@
 package com.example.final_project_team10.ui
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
@@ -18,6 +16,7 @@ class HomeScreenFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var moviePosterOne: ImageView
     private lateinit var moviePosterTwo: ImageView
+    private lateinit var moviePosterThree: ImageView
 
     private val moviePosterUrls = listOf(
         "https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
@@ -29,8 +28,19 @@ class HomeScreenFragment : Fragment(R.layout.fragment_home) {
         "https://image.tmdb.org/t/p/w500/b4Oe15CGLL61Ped0RAS9JpqdmCt.jpg"
     )
 
-    private var firstCurrentMoviePoster = 0
-    private var secondCurrentMoviePoster = 1
+    private var nextPosterIndex = 0
+
+    private val scrollSpeed = 6f
+    private val gap = 60f
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val moveRunnable = object : Runnable {
+        override fun run() {
+            movePosters()
+            handler.postDelayed(this, 16L)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,6 +51,7 @@ class HomeScreenFragment : Fragment(R.layout.fragment_home) {
 
         moviePosterOne = view.findViewById(R.id.moviePosterOne)
         moviePosterTwo = view.findViewById(R.id.moviePosterTwo)
+        moviePosterThree = view.findViewById(R.id.moviePosterThree)
 
         startGameButton.setOnClickListener {
             Log.d("Start Game Button", "Navigating to Game Page")
@@ -61,66 +72,56 @@ class HomeScreenFragment : Fragment(R.layout.fragment_home) {
         }
 
         moviePosterOne.post {
-            displayPoster(moviePosterOne, true)
-
-            moviePosterTwo.postDelayed({
-                displayPoster(moviePosterTwo, false)
-            }, 6500L)
+            setupPosters()
+            handler.post(moveRunnable)
         }
     }
 
-    private fun displayPoster(moviePoster: ImageView, isFirstPoster: Boolean) {
-        val currentIndex = if (isFirstPoster) {
-            firstCurrentMoviePoster
-        } else {
-            secondCurrentMoviePoster
+    private fun setupPosters() {
+        loadNextPoster(moviePosterOne)
+        loadNextPoster(moviePosterTwo)
+        loadNextPoster(moviePosterThree)
+
+        val parentHeight = 0f
+        // val parentHeight = requireView().height.toFloat()
+        val posterHeight = moviePosterOne.height.toFloat()
+
+        moviePosterOne.translationY = parentHeight
+        moviePosterTwo.translationY = parentHeight + posterHeight + gap
+        moviePosterThree.translationY = parentHeight + 2f * (posterHeight + gap)
+    }
+
+    private fun movePosters() {
+        val posterHeight = moviePosterOne.height.toFloat()
+
+        moviePosterOne.translationY -= scrollSpeed
+        moviePosterTwo.translationY -= scrollSpeed
+        moviePosterThree.translationY -= scrollSpeed
+
+        if (moviePosterOne.translationY <= -posterHeight) {
+            moviePosterOne.translationY = moviePosterThree.translationY + posterHeight + gap
+            loadNextPoster(moviePosterOne)
         }
 
-        val posterUrl = moviePosterUrls[currentIndex]
-
-        moviePoster.load(posterUrl) {
-            listener(
-                onSuccess = { _, _ ->
-                    posterAnimation(moviePoster, isFirstPoster)
-                }
-            )
+        if (moviePosterTwo.translationY <= -posterHeight) {
+            moviePosterTwo.translationY = moviePosterOne.translationY + posterHeight + gap
+            loadNextPoster(moviePosterTwo)
         }
 
-        if (isFirstPoster) {
-            firstCurrentMoviePoster = (firstCurrentMoviePoster + 2) % moviePosterUrls.size
-        } else {
-            secondCurrentMoviePoster = (secondCurrentMoviePoster + 2) % moviePosterUrls.size
+        if (moviePosterThree.translationY <= -posterHeight) {
+            moviePosterThree.translationY = moviePosterTwo.translationY + posterHeight + gap
+            loadNextPoster(moviePosterThree)
         }
     }
 
-    private fun posterAnimation(
-        moviePoster: ImageView,
-        isFirstPoster: Boolean
-    ) {
-        val screenHeight = requireView().height.toFloat()
-        val posterHeight = moviePoster.height.toFloat()
+    private fun loadNextPoster(imageView: ImageView) {
+        val posterUrl = moviePosterUrls[nextPosterIndex]
+        imageView.load(posterUrl)
+        nextPosterIndex = (nextPosterIndex + 1) % moviePosterUrls.size
+    }
 
-        val startY = screenHeight + 200f
-        val endY = -(posterHeight + 200f)
-
-        moviePoster.translationY = startY
-
-        val animator = ObjectAnimator.ofFloat(
-            moviePoster,
-            View.TRANSLATION_Y,
-            startY,
-            endY
-        )
-
-        animator.duration = 12000L
-        animator.interpolator = LinearInterpolator()
-
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                displayPoster(moviePoster, isFirstPoster)
-            }
-        })
-
-        animator.start()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler.removeCallbacks(moveRunnable)
     }
 }
