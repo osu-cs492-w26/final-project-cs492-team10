@@ -246,8 +246,8 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
                 gameResult.text = "Incorrect | Final Score: ${viewModel.score.value}"
                 viewModel.resetScore()
-                isFirstRound = true
                 viewModel.resetGame()
+                isFirstRound = true
                 nextGame.text = "New Game"
             }
             gameResult.visibility = View.VISIBLE
