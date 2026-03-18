@@ -20,6 +20,7 @@ preferenceKtx = "1.2.1"
 preference = "1.2.1"
 coil = "2.7.0"
 ksp = "2.0.21-1.0.28"
+coreAnimation = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +54,7 @@ androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview"
 
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+androidx-core-animation = { group = "androidx.core", name = "core-animation", version.ref = "coreAnimation" }
 
 
 [plugins]

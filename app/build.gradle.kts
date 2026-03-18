@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.preference)
 
     implementation(libs.coil)
+    implementation(libs.androidx.core.animation)
 
 
     testImplementation(libs.junit)

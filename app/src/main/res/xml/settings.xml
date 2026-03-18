@@ -3,20 +3,37 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ListPreference
-        app:key="game_mode"
-        app:title="Game Mode"
-        android:entries="@array/pref_mode_entries"
-        android:entryValues="@array/pref_mode_values"
-        android:defaultValue="classic"
-        app:useSimpleSummaryProvider="true"/>
+    <Preference
+        app:key="settings_intro"
+        app:title="Game Settings"
+        app:summary="Customize how the Higher/Lower game is played."
+        app:selectable="false"
+        app:iconSpaceReserved="false" />
 
-    <ListPreference
-        app:key="@string/pref_genre_key"
-        app:title="Genre"
-        android:entries="@array/pref_genre_entries"
-        android:entryValues="@array/pref_genre_values"
-        android:defaultValue="0"
-        app:useSimpleSummaryProvider="true"/>
+    <PreferenceCategory
+        app:title="Gameplay"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="game_mode"
+            app:title="Game Mode"
+            app:summary="Choose the rule set for each round"
+            android:entries="@array/pref_mode_entries"
+            android:entryValues="@array/pref_mode_values"
+            android:defaultValue="classic"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:key="@string/pref_genre_key"
+            app:title="Movie Genre"
+            app:summary="Choose which genre to pull movies from"
+            android:entries="@array/pref_genre_entries"
+            android:entryValues="@array/pref_genre_values"
+            android:defaultValue="0"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>
