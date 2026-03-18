@@ -50,30 +50,29 @@ class GameScreenViewModel : ViewModel(){
         viewModelScope.launch {
             _loading.value = true
 
-            val pagesToLoad = 1
-            val randomPages = (1..100).shuffled().take(pagesToLoad)
-            Log.d("Random Pages", "Random pages are ${randomPages}")
+            fetchMoviesIntoPool(pagesToLoad = 1)
 
+            _loading.value = false
+            startGameFromPool()
+        }
+    }
 
-            for (page in randomPages) {
-                val result = repository.loadMoviesByGenre(currentGenreId, apiKey, page, true)
-                if (result.isSuccess) {
-                    val movies = result.getOrNull() ?: emptyList()
-                    movies.forEach { movie ->
-                        if (seenIds.add(movie.id)) {
-                            moviePool.add(movie)
-                        }
+    private suspend fun fetchMoviesIntoPool(pagesToLoad: Int) {
+        val randomPages = (1..20).shuffled().take(pagesToLoad)
+
+        for (page in randomPages) {
+            val result = repository.loadMoviesByGenre(currentGenreId, API_KEY, page, true)
+            if (result.isSuccess) {
+                val movies = result.getOrNull().orEmpty()
+                movies.forEach {
+                    if (seenIds.add(it.id)) {
+                        moviePool.add(it)
                     }
                 }
             }
-
-            moviePool.shuffle()
-
-            _loading.value = false
-
-            // START THE GAME AFTER LOADING
-            startGameFromPool()
         }
+
+        moviePool.shuffle()
     }
 
     fun startGameFromPool() {
@@ -99,6 +98,8 @@ class GameScreenViewModel : ViewModel(){
         val minRating = targetRating - window
         val maxRating = targetRating + window
 
+        Log.d("Classic: Movie Pool", moviePool.map { it.title }.toString())
+        Log.d("Movie PoolClass Count", "${moviePool.size}")
         var candidates = moviePool.filter {
             it.vote_average in minRating..maxRating
         }
@@ -108,7 +109,8 @@ class GameScreenViewModel : ViewModel(){
         }
 
         if (candidates.isEmpty()) {
-            Log.e("GameScreen", "No movies left in pool")
+            Log.e("GameScreen", "No movies left in pool. Resetting movie pool")
+            refillMoviePool(winner)
             return
         }
 
@@ -118,6 +120,8 @@ class GameScreenViewModel : ViewModel(){
 
         _movieAResults.value = winner
         _movieBResults.value = nextMovie
+        Log.d("Classic: Movie Pool", "${winner.title}: ${winner.vote_average}")
+        Log.d("Classic: Movie Pool", "${nextMovie.title}: ${nextMovie.vote_average}")
     }
 
 
@@ -134,7 +138,7 @@ class GameScreenViewModel : ViewModel(){
 
             moviePool.shuffle()
 
-            Log.d("Movie Pool", moviePool.map { it.title }.toString())
+            Log.d("Random: Movie Pool", moviePool.map { it.title }.toString())
             Log.d("Movie Pool Count", "${moviePool.size}")
             val movieA = moviePool.removeAt(0)
             val movieB = moviePool.removeAt(0)
@@ -156,14 +160,22 @@ class GameScreenViewModel : ViewModel(){
         _score.value = 0
     }
 
-//    Function to reset moviePool and usedMovieIds on game restart
-    fun resetGame() {
-        Log.d("GamePool", "Pool size before reset: ${moviePool.size}")
-        moviePool.clear()
-        seenIds.clear()
-        Log.d("GamePool", "Pool size before preload: ${moviePool.size}")
-        preloadMovies(API_KEY)
-        Log.d("GamePool", "Pool size after preload: ${moviePool.size}")
+    fun refillMoviePool(winner: Movie_Info) {
+        viewModelScope.launch {
+            _loading.value = true
+
+            fetchMoviesIntoPool(1)
+
+            _loading.value = false
+
+            if (moviePool.isNotEmpty()) {
+                val nextMovie = moviePool.removeAt(0)
+                _movieAResults.value = winner
+                _movieBResults.value = nextMovie
+            } else {
+                Log.e("GameScreen", "Refill failed, still no movies")
+            }
+        }
     }
 
     fun setGenreId(genreId: Int?) {

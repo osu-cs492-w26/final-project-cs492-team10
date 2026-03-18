@@ -21,7 +21,7 @@ import com.google.android.material.button.MaterialButton
 //everything in here should be an almost direct copy from the assignment 4 startercode
 class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
-    private val API_KEY = "142812ec11e8136f3be45a8439922fa8"
+    private val API_KEY = "3ce2644f89025c1d74bf04a36bee0ba2"
     private val viewModel: GameScreenViewModel by viewModels()
 
     private val scoreboardViewModel: ScoreboardViewModel by activityViewModels()
@@ -265,7 +265,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
                 //checks if it's a new game (after losing) or next round (after winning)
                 if (nextGame.text == "New Game") {
-                    viewModel.resetGame()
+                    viewModel.startGameFromPool()
                 } else {
                     //Next Round - continue with same winner as A
                     if (gamemode == "classic") {

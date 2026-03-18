@@ -1,5 +1,6 @@
 package com.example.final_project_team10.data
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -57,10 +58,15 @@ class Movie_Info_Repository (
         page: Int = 1,
         forceRefresh: Boolean = false
     ): Result<List<Movie_Info>> {
+
+        Log.d("REPO", "loadMoviesByGenre called | genre=$genreId page=$page forceRefresh=$forceRefresh")
+
         return if (forceRefresh || shouldFetchGenre(genreId)) {
             withContext(ioDispatcher) {
                 try {
+                    Log.d("REPO", "Making API request...")
                     val response = service.getMovieByGenre(apiKey, genreId, page)
+                    Log.d("REPO", "Response received | success=${response.isSuccessful} code=${response.code()}")
                     if (response.isSuccessful) {
                         cachedGenreMovies = response.body()?.results ?: emptyList()
                         genreTimeStamp = timeSource.markNow()
@@ -75,6 +81,7 @@ class Movie_Info_Repository (
                 }
             }
         } else {
+            Log.d("REPO", "Using cached data | size=${cachedGenreMovies?.size}")
             Result.success(cachedGenreMovies!!)
         }
     }
