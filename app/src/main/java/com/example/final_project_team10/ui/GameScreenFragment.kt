@@ -159,6 +159,12 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
     }
 
     private fun bindMovieA(movie: Movie_Info) {
+        //gets the game mode from preference/setting from user
+        val gamemode = prefs.getString(
+            getString(R.string.pref_mode_key),
+            getString(R.string.pref_mode_default_value)
+        )
+
         titleTextA.text = movie.title
         dateTextA.text = extractYear(movie.release_date)
 
@@ -166,6 +172,11 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
             crossfade(true)
             placeholder(R.drawable.ic_launcher_background)
             error(R.drawable.ic_launcher_background)
+        }
+
+        if (gamemode != "classic") {
+            ratingResultsA.text = getString(R.string.hidden_rating)
+            ratingResultsA.visibility = View.VISIBLE
         }
     }
 
