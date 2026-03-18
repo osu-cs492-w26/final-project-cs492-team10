@@ -53,6 +53,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
     private lateinit var nextGame: MaterialButton
 
     private var ratingRevealed = false
+    private var isFirstRound = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -174,7 +175,15 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
             error(R.drawable.ic_launcher_background)
         }
 
-        if (gamemode != "classic") {
+        if (gamemode == "classic") {
+            if (isFirstRound) {
+                ratingResultsA.text = getString(R.string.hidden_rating)
+                ratingResultsA.visibility = View.VISIBLE
+            } else {
+                ratingResultsA.text = "Rating: ${movie.vote_average}"
+                ratingResultsA.visibility = View.VISIBLE
+            } 
+        } else {
             ratingResultsA.text = getString(R.string.hidden_rating)
             ratingResultsA.visibility = View.VISIBLE
         }
@@ -209,6 +218,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         val movieB_name = viewModel.movieB.value
 
         ratingRevealed = true
+        isFirstRound = false
 
         //displays the rating of both
         ratingResultsA.text = "Rating: ${movieA_name?.vote_average}"
@@ -236,6 +246,7 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
                 gameResult.text = "Incorrect | Final Score: ${viewModel.score.value}"
                 viewModel.resetScore()
+                isFirstRound = true
                 nextGame.text = "New Game"
             }
             gameResult.visibility = View.VISIBLE
