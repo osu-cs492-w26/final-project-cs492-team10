@@ -246,7 +246,6 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
                 gameResult.text = "Incorrect | Final Score: ${viewModel.score.value}"
                 viewModel.resetScore()
-                viewModel.resetGame()
                 isFirstRound = true
                 nextGame.text = "New Game"
             }
@@ -264,11 +263,16 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
                 movieABox.isClickable = true
                 movieBBox.isClickable = true
 
-                //checks the game mode setting to decide the game mode
-                if (gamemode == "classic") {
-                    viewModel.loadNextFromPool()
+                //checks if it's a new game (after losing) or next round (after winning)
+                if (nextGame.text == "New Game") {
+                    viewModel.resetGame()
                 } else {
-                    viewModel.loadRandomMovieInfo(API_KEY)
+                    //Next Round - continue with same winner as A
+                    if (gamemode == "classic") {
+                        viewModel.loadNextFromPool()
+                    } else {
+                        viewModel.loadRandomMovieInfo(API_KEY)
+                    }
                 }
 
                 nextGame.visibility = View.INVISIBLE
