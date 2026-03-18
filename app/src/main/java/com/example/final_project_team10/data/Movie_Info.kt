@@ -27,7 +27,8 @@ data class Movie_Info(
     val runtime: Int?,
     val budget: Long?,
     val revenue: Long?,
-    val genres: List<Genre>?
+    val genres: List<Genre>?,
+    val vote_count: Int
 )
 
 @JsonClass(generateAdapter = true)
