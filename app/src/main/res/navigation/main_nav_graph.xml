@@ -25,7 +25,11 @@
             android:id="@+id/navigate_to_settings_page"
             app:destination="@id/setting_page" />
 
-
-
+    <fragment
+        android:id="@+id/scoreboard_page"
+        android:name="com.example.final_project_team10.ui.ScoreboardFragment"/>
+    <action
+        android:id="@+id/navigate_to_scoreboard_page"
+        app:destination="@id/scoreboard_page" />
 
 </navigation>

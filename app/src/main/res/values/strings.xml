@@ -34,4 +34,10 @@
     <string name="pref_mode_value_random" translatable="false">random</string>
 
     <string name="hidden_rating">\?\?\?</string>
+
+    <string name="scoreboard_rank">#%d</string>
+    <string name="scoreboard_score">%d pts</string>
+    <string name="scoreboard_genre">Genre: %s</string>
+    <string name="scoreboard_mode">Mode: %s</string>
+    <string name="scoreboard_date">Date: %s</string>
 </resources>

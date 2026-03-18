@@ -14,6 +14,7 @@ import com.example.final_project_team10.data.Movie_Info
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.fragment.app.activityViewModels
 import coil.load
 import com.google.android.material.button.MaterialButton
 
@@ -22,6 +23,8 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
 
     private val API_KEY = "142812ec11e8136f3be45a8439922fa8"
     private val viewModel: GameScreenViewModel by viewModels()
+
+    private val scoreboardViewModel: ScoreboardViewModel by activityViewModels()
 
     private lateinit var prefs: SharedPreferences
     private lateinit var loadingIndicator: CircularProgressIndicator
@@ -156,6 +159,12 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
     }
 
     private fun bindMovieA(movie: Movie_Info) {
+        //gets the game mode from preference/setting from user
+        val gamemode = prefs.getString(
+            getString(R.string.pref_mode_key),
+            getString(R.string.pref_mode_default_value)
+        )
+
         titleTextA.text = movie.title
         dateTextA.text = extractYear(movie.release_date)
 
@@ -163,6 +172,11 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
             crossfade(true)
             placeholder(R.drawable.ic_launcher_background)
             error(R.drawable.ic_launcher_background)
+        }
+
+        if (gamemode != "classic") {
+            ratingResultsA.text = getString(R.string.hidden_rating)
+            ratingResultsA.visibility = View.VISIBLE
         }
     }
 
@@ -212,6 +226,14 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
                 nextGame.text = "Next Round"
             }
             else {
+                //enters final score to scoreboard
+                val finalScore = viewModel.score.value ?: 0
+                val genreValue = prefs.getString("genre", "0")
+                val genreName = genreToName(genreValue)
+                val gameMode = prefs.getString("game_mode", "classic")
+                val gameModeName = if (gameMode == "classic") "Classic" else "Random"
+                scoreboardViewModel.insertInfo(finalScore, genreName, gameModeName)
+
                 gameResult.text = "Incorrect | Final Score: ${viewModel.score.value}"
                 viewModel.resetScore()
                 viewModel.resetGame()
@@ -258,5 +280,16 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         }
     }
 
+    //helper function to match genreid to genre string
+    private fun genreToName(genreValue: String?): String {
+        return when (genreValue) {
+            "28" -> "Action"
+            "10749" -> "Romance"
+            "35" -> "Comedy"
+            "27" -> "Horror"
+            "18" -> "Drama"
+            else -> "All"
+        }
+    }
 
 }
