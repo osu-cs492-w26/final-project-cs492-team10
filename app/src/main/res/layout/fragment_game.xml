@@ -67,6 +67,14 @@
                     android:contentDescription="Movie A Poster"
                     android:scaleType="fitCenter" />
 
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/posterLoadingA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
+
                 <ImageButton
                     android:id="@+id/detailsButtonA"
                     android:layout_width="36dp"
@@ -182,6 +190,14 @@
                     android:background="@android:color/black"
                     android:contentDescription="Movie B Poster"
                     android:scaleType="fitCenter" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/posterLoadingB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
 
                 <ImageButton
                     android:id="@+id/detailsButtonB"

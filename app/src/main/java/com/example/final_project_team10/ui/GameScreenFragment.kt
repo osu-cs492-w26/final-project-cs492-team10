@@ -39,11 +39,16 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
     private lateinit var posterImageA: ImageView
     private lateinit var detailsButtonA: ImageButton
 
+    private lateinit var posterLoadingA: CircularProgressIndicator
+
+
     //for movie B
     private lateinit var titleTextB: TextView
     private lateinit var dateTextB: TextView
     private lateinit var posterImageB: ImageView
     private lateinit var detailsButtonB: ImageButton
+
+    private lateinit var posterLoadingB: CircularProgressIndicator
 
     //result values
     private lateinit var ratingResultsA: TextView
@@ -69,11 +74,13 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         dateTextA = view.findViewById(R.id.dateTextA)
         posterImageA = view.findViewById(R.id.posterImageA)
         detailsButtonA = view.findViewById(R.id.detailsButtonA)
+        posterLoadingA = view.findViewById(R.id.posterLoadingA)
 
         titleTextB = view.findViewById(R.id.titleTextB)
         dateTextB = view.findViewById(R.id.dateTextB)
         posterImageB = view.findViewById(R.id.posterImageB)
         detailsButtonB = view.findViewById(R.id.detailsButtonB)
+        posterLoadingB = view.findViewById(R.id.posterLoadingB)
 
         ratingResultsA = view.findViewById(R.id.tv_resultA)
         ratingResultsB = view.findViewById(R.id.tv_resultB)
@@ -169,10 +176,13 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         titleTextA.text = movie.title
         dateTextA.text = extractYear(movie.release_date)
 
+        posterLoadingA.visibility = View.VISIBLE
         posterImageA.load(getPosterUrl(movie.poster_path)) {
             crossfade(true)
-            placeholder(R.drawable.ic_launcher_background)
-            error(R.drawable.ic_launcher_background)
+            listener(
+                onSuccess = { _, _ -> posterLoadingA.visibility = View.GONE },
+                onError = { _, _ -> posterLoadingA.visibility = View.GONE }
+            )
         }
 
         if (gamemode == "classic") {
@@ -193,10 +203,13 @@ class GameScreenFragment : Fragment(R.layout.fragment_game) {
         titleTextB.text = movie.title
         dateTextB.text = extractYear(movie.release_date)
 
+        posterLoadingB.visibility = View.VISIBLE
         posterImageB.load(getPosterUrl(movie.poster_path)) {
             crossfade(true)
-            placeholder(R.drawable.ic_launcher_background)
-            error(R.drawable.ic_launcher_background)
+            listener(
+                onSuccess = { _, _ -> posterLoadingB.visibility = View.GONE },
+                onError = { _, _ -> posterLoadingB.visibility = View.GONE }
+            )
         }
 
         //Added this so the ratings for movie B is always initially shown as '???". We can remove if we want.
